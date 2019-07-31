@@ -2,6 +2,7 @@ mod file_platform;
 use file_platform::ReadAtFile;
 
 use std::cmp::Ordering;
+use std::collections::HashSet;
 use std::str::from_utf8;
 
 fn read_line_at(f: &ReadAtFile, mut pos: u64) -> Vec<u8> {
@@ -526,6 +527,20 @@ impl Database {
             }
         }
         all
+    }
+
+    /// find all synonyms of a word.
+    ///
+    /// This search is case-insensitive.
+    pub fn synonyms(&self, word: &str) -> HashSet<String> {
+        let senses = self.senses("horse");
+        let mut synonyms = HashSet::new();
+        for i in 0..senses.len() {
+            senses[i].synonyms.iter().for_each(|e| {
+                synonyms.insert(e.word.clone());
+            });
+        }
+        synonyms
     }
 }
 
